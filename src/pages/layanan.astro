@@ -1,0 +1,81 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+import BgImage from '../components/BgImage.astro';
+import Alur from '../components/Alur.astro';
+import Faq from '../components/Faq.astro';
+import Cta from '../components/Cta.astro';
+import { layanan, alur, aplikasi, faq } from '../data/konten';
+import { foto, hero } from '../lib/images';
+import { waLayanan, faqLd } from '../lib/utils';
+const crumbs = [{ name: 'Layanan', href: '/layanan/' }];
+const f = faq.slice(3, 8);
+---
+<Base title="Layanan: Solusi Geosynthetic untuk Proyek Konstruksi" description="Layanan Geotex Karya Agung: konsultasi kebutuhan produk, penyediaan produk geosynthetic, informasi data produk, dan permintaan penawaran melalui WhatsApp." crumbs={crumbs} jsonLd={[faqLd(f)]}>
+  <!-- Hero: panel foto diagonal di kanan -->
+  <section class="relative overflow-hidden bg-navy-900 text-white">
+    <div class="lg:hidden"><BgImage src={hero(4)} overlay="bg-navy-950/80" /></div>
+    <div class="absolute inset-y-0 right-0 hidden w-[58%] lg:block [clip-path:polygon(14%_0,100%_0,100%_100%,0_100%)]">
+      <Photo src={hero(4)} alt="" hint="src/assets/hero/04.jpg" eager widths={[800, 1280, 1600]} sizes="60vw" class="size-full object-cover" />
+      <div class="absolute inset-0 bg-navy-950/25"></div>
+    </div>
+    <div class="lattice absolute inset-0 opacity-60 lg:w-[45%]"></div>
+    <div class="container-x relative py-16 md:py-28">
+      <div class="max-w-xl">
+        <nav aria-label="Breadcrumb" class="mb-5 text-sm text-white/70"><a href="/" class="hover:text-white">Beranda</a> / <span aria-current="page" class="text-white">Layanan</span></nav>
+        <h1 class="text-4xl font-extrabold leading-tight md:text-5xl">Layanan untuk kebutuhan geosynthetic proyek Anda</h1>
+        <p class="mt-5 text-lg leading-relaxed text-white/85">Dari konsultasi hingga permintaan penawaran, semua dapat dimulai melalui WhatsApp.</p>
+        <a href={waLayanan} target="_blank" rel="noopener" class="btn btn-brand mt-8"><Icon name="message" class="size-4" />Tanya layanan kami</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Layanan, baris bergantian -->
+  <section class="section">
+    <div class="container-x space-y-16 md:space-y-24">
+      {layanan.map((l, i) => (
+        <article class="grid items-center gap-10 lg:grid-cols-2">
+          <div class:list={[i % 2 === 1 ? 'lg:order-2' : '']}>
+            <Photo src={foto('layanan', i + 1, 24 + i * 3)} alt={l.judul} hint={`src/assets/layanan/0${i + 1}.jpg`} class="aspect-[4/3] w-full object-cover" sizes="(min-width:1024px) 540px, 90vw" />
+          </div>
+          <div>
+            <span class="grid size-12 place-items-center bg-navy-900 text-white"><Icon name={l.icon} class="size-6" /></span>
+            <h2 class="mt-5 text-2xl font-extrabold text-navy-900 md:text-3xl">{l.judul}</h2>
+            <p class="mt-3 text-lg leading-relaxed text-ink/80">{l.teks}</p>
+            <ul class="mt-5 space-y-2">{l.poin.map((p) => <li class="flex gap-3"><Icon name="check" class="mt-1 size-5 shrink-0 text-brand" />{p}</li>)}</ul>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section bg-mist">
+    <div class="container-x">
+      <h2 class="text-3xl font-extrabold text-navy-900 md:text-4xl">Alur konsultasi</h2>
+      <div class="mt-10"><Alur langkah={alur} /></div>
+    </div>
+  </section>
+
+  <section class="section lattice bg-navy-900 text-white">
+    <div class="container-x">
+      <h2 class="text-3xl font-extrabold md:text-4xl">Bidang yang kami layani</h2>
+      <ul class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {aplikasi.map((a, i) => (
+          <li class="flex gap-4 bg-navy-950 p-5">
+            <Photo src={foto('aplikasi', i + 1, 6 + i * 3)} alt={a.judul} hint={`src/assets/aplikasi/0${i + 1}.jpg`} class="size-24 shrink-0 object-cover" widths={[200, 320]} sizes="96px" />
+            <div><h3 class="flex items-center gap-2 font-extrabold"><Icon name={a.icon} class="size-5 text-brand" />{a.judul}</h3><p class="mt-1 text-sm text-white/75">{a.teks}</p></div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-x grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
+      <h2 class="text-3xl font-extrabold text-navy-900">Pertanyaan seputar layanan</h2>
+      <Faq items={f} />
+    </div>
+  </section>
+  <Cta href={waLayanan} judul="Tanyakan layanan kami" />
+</Base>

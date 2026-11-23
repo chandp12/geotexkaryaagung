@@ -1,0 +1,148 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+import BgImage from '../components/BgImage.astro';
+import Alur from '../components/Alur.astro';
+import Faq from '../components/Faq.astro';
+import Cta from '../components/Cta.astro';
+import { site } from '../data/site';
+import { profil, keunggulan, stat, alur, faq } from '../data/konten';
+import { getProducts } from '../lib/content';
+import { foto, hero, productImages } from '../lib/images';
+import { waUmum, faqLd } from '../lib/utils';
+const produk = await getProducts();
+const crumbs = [{ name: 'Tentang Kami', href: '/tentang-kami/' }];
+const f = faq.slice(0, 4);
+---
+<Base title="Tentang Kami: Distributor Geotextile Indonesia" description="Profil Geotex Karya Agung, perusahaan geotextile dan geosynthetic yang berdiri sejak 2020. Kenali visi, misi, nilai, dan kategori produk kami." crumbs={crumbs} jsonLd={[faqLd(f)]}>
+  <!-- Hero: teks kiri, strip statistik di dasar -->
+  <section class="relative overflow-hidden bg-navy-900 text-white">
+    <BgImage src={hero(2)} hint="src/assets/hero/02.jpg" overlay="bg-navy-950/75" />
+    <div class="container-x relative pt-16 md:pt-24">
+      <nav aria-label="Breadcrumb" class="mb-5 text-sm text-white/70"><a href="/" class="hover:text-white">Beranda</a> / <span aria-current="page" class="text-white">Tentang Kami</span></nav>
+      <h1 class="max-w-3xl text-4xl font-extrabold leading-tight md:text-6xl">Tentang Geotex Karya Agung</h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-white/85">Perusahaan geotextile dan geosynthetic yang berdiri sejak {site.tahun}, melayani kebutuhan perkuatan tanah, drainase, dan lapisan kedap air.</p>
+      <ul class="mt-14 grid grid-cols-2 border-t border-white/25 md:grid-cols-4">
+        {stat.map((s) => (
+          <li class="flex items-center gap-3 border-white/25 py-5 md:border-l md:px-5 md:first:border-l-0 md:first:pl-0">
+            <Icon name={s.icon} class="size-7 shrink-0 text-brand" stroke={1.5} />
+            <div><p class="font-extrabold leading-tight">{s.angka}</p><p class="text-xs text-white/70">{s.label}</p></div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Profil -->
+  <section class="section">
+    <div class="container-x grid items-center gap-12 lg:grid-cols-2">
+      <div class="space-y-4 text-lg leading-relaxed text-ink/80">
+        <h2 class="text-3xl font-extrabold text-navy-900">Profil perusahaan</h2>
+        {profil.paragraf.map((t) => <p>{t}</p>)}
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <Photo src={foto('tentang', 1, 14)} alt="Produk Geotex Karya Agung" hint="src/assets/tentang/01.jpg" class="aspect-[3/4] size-full object-cover" sizes="(min-width:1024px) 280px, 45vw" />
+        <Photo src={foto('tentang', 2, 15)} alt="Material geosynthetic Geotex Karya Agung" hint="src/assets/tentang/02.jpg" class="mt-8 aspect-[3/4] size-full object-cover" sizes="(min-width:1024px) 280px, 45vw" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Sejarah -->
+  <section class="section bg-mist">
+    <div class="container-x grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+      <Photo src={foto('tentang', 3, 16)} alt="Dokumentasi Geotex Karya Agung" hint="src/assets/tentang/03.jpg" class="aspect-[4/3] w-full object-cover" sizes="(min-width:1024px) 520px, 90vw" />
+      <div>
+        <span class="grid size-12 place-items-center bg-navy-900 text-white"><Icon name="book" class="size-6" /></span>
+        <h2 class="mt-5 text-3xl font-extrabold text-navy-900">Sejarah singkat</h2>
+        <p class="mt-4 text-lg leading-relaxed text-ink/80">{profil.sejarah}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visi misi -->
+  <section class="section">
+    <div class="container-x grid gap-px bg-line lg:grid-cols-2">
+      <div class="bg-white p-8 md:p-10">
+        <span class="grid size-12 place-items-center bg-brand text-white"><Icon name="eye" class="size-6" /></span>
+        <h2 class="mt-5 text-2xl font-extrabold text-navy-900">Visi</h2>
+        <p class="mt-3 text-lg leading-relaxed text-ink/80">{profil.visi}</p>
+      </div>
+      <div class="bg-white p-8 md:p-10">
+        <span class="grid size-12 place-items-center bg-navy-900 text-white"><Icon name="target" class="size-6" /></span>
+        <h2 class="mt-5 text-2xl font-extrabold text-navy-900">Misi</h2>
+        <ul class="mt-3 space-y-3">{profil.misi.map((m) => <li class="flex gap-3 text-ink/80"><Icon name="check" class="mt-1 size-5 shrink-0 text-brand" />{m}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nilai -->
+  <section class="section lattice bg-navy-900 text-white">
+    <div class="container-x">
+      <h2 class="text-3xl font-extrabold md:text-4xl">Nilai perusahaan</h2>
+      <ul class="mt-10 grid gap-px bg-white/15 sm:grid-cols-2 lg:grid-cols-4">
+        {profil.nilai.map((n) => (
+          <li class="bg-navy-950 p-7">
+            <Icon name={n.icon} class="size-8 text-brand" stroke={1.5} />
+            <h3 class="mt-4 text-lg font-extrabold">{n.judul}</h3>
+            <p class="mt-1 text-sm text-white/75">{n.teks}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Bidang usaha -->
+  <section class="section">
+    <div class="container-x">
+      <h2 class="text-3xl font-extrabold text-navy-900 md:text-4xl">Bidang usaha</h2>
+      <p class="mt-3 max-w-xl text-ink/75">Sembilan kategori produk geotextile dan geosynthetic.</p>
+      <ul class="mt-10 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+        {produk.map((p) => (
+          <li>
+            <a href={`/produk/${p.slug}/`} class="group relative block aspect-square overflow-hidden">
+              <Photo src={productImages(p.slug)[0]} alt={`${p.nama} Geotex Karya Agung`} hint={p.slug} class="size-full object-cover transition-transform duration-300 group-hover:scale-105" sizes="(min-width:1024px) 220px, 45vw" />
+              <span class="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-navy-950/85 px-3 py-2 text-sm font-bold text-white"><Icon name={p.icon} class="size-4 text-brand" />{p.nama}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Keunggulan -->
+  <section class="section bg-mist">
+    <div class="container-x">
+      <h2 class="text-3xl font-extrabold text-navy-900 md:text-4xl">Keunggulan kami</h2>
+      <ul class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {keunggulan.map((k) => (
+          <li class="flex gap-4 bg-white p-6"><span class="grid size-11 shrink-0 place-items-center bg-navy-900 text-white"><Icon name={k.icon} /></span>
+            <div><h3 class="font-extrabold text-navy-900">{k.judul}</h3><p class="mt-1 text-sm text-ink/75">{k.teks}</p></div></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Alur -->
+  <section class="section">
+    <div class="container-x">
+      <h2 class="text-3xl font-extrabold text-navy-900 md:text-4xl">Bekerja sama dengan kami</h2>
+      <div class="mt-10"><Alur langkah={alur} /></div>
+    </div>
+  </section>
+
+  <!-- Galeri strip -->
+  <section class="pb-16 md:pb-24">
+    <ul class="grid grid-cols-2 gap-1 md:grid-cols-4">
+      {[4, 5, 6, 7].map((n) => <li><Photo src={foto('tentang', n, 14 + n * 2)} alt="Dokumentasi Geotex Karya Agung" hint={`src/assets/tentang/0${n}.jpg`} class="aspect-[4/3] size-full object-cover" sizes="(min-width:768px) 25vw, 50vw" /></li>)}
+    </ul>
+  </section>
+
+  <section class="section bg-mist">
+    <div class="container-x grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
+      <h2 class="text-3xl font-extrabold text-navy-900">Pertanyaan umum</h2>
+      <Faq items={f} />
+    </div>
+  </section>
+  <Cta href={waUmum} />
+</Base>

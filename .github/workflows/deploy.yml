@@ -1,0 +1,31 @@
+# Build Astro lalu unggah hasilnya ke Hostinger lewat FTP.
+# Dijalankan manual (Actions > Deploy ke Hostinger > Run workflow)
+# atau otomatis oleh webhook WordPress (event "wp-update") di tahap CMS.
+name: Deploy ke Hostinger
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [wp-update]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          WP_API_URL: ${{ secrets.WP_API_URL }}
+          PUBLIC_GA_ID: ${{ secrets.PUBLIC_GA_ID }}
+      - uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_DIR }}
+          local-dir: ./dist/

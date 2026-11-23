@@ -1,0 +1,72 @@
+---
+import { getImage } from 'astro:assets';
+import Icon from './Icon.astro';
+import Photo from './Photo.astro';
+import type { ImageMetadata } from 'astro';
+interface Props { images: (ImageMetadata | undefined)[]; nama: string; mosaic?: boolean }
+const { images, nama, mosaic = false } = Astro.props;
+const nyata = images.filter((x): x is ImageMetadata => !!x);
+const dibuat = await Promise.all(
+  nyata.map(async (img, i) => ({
+    thumb: await getImage({ src: img, width: 900, format: 'webp' }),
+    full: await getImage({ src: img, width: 1600, format: 'webp' }),
+    alt: `${nama} Geotex Karya Agung, foto ${i + 1}`,
+  })),
+);
+let k = 0;
+const tiles = images.map((img) => (img ? { ...dibuat[k], idx: k++ } : null));
+const pola = ['col-span-2 row-span-2', '', '', 'row-span-2', '', '', 'col-span-2'];
+---
+{images.length > 0 && (
+  <>
+    <ul class:list={['grid gap-3', mosaic ? 'grid-flow-dense auto-rows-[140px] grid-cols-2 md:auto-rows-[180px] md:grid-cols-4' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4']} data-gallery>
+      {tiles.map((t, i) => (
+        <li class:list={[mosaic ? pola[i % pola.length] : 'aspect-[4/3]', 'overflow-hidden bg-mist']}>
+          {t ? (
+            <button type="button" data-index={t.idx} class="block size-full" aria-label={`Perbesar foto ${t.idx + 1} dari ${nyata.length}`}>
+              <img src={t.thumb.src} width={t.thumb.attributes.width} height={t.thumb.attributes.height} alt={t.alt} loading="lazy" decoding="async" class="size-full object-cover transition-transform duration-300 hover:scale-[1.04]" />
+            </button>
+          ) : (
+            <Photo alt={`Foto ${nama}`} hint={`slot foto ${i + 1}`} class="size-full object-cover" />
+          )}
+        </li>
+      ))}
+    </ul>
+
+    {nyata.length > 0 && (
+      <>
+        <dialog id="lightbox" aria-label={`Galeri foto ${nama}`} class="m-0 h-full max-h-none w-full max-w-none bg-navy-950/95 p-0 open:flex open:items-center open:justify-center backdrop:bg-transparent">
+          <button type="button" data-lb="close" class="absolute right-4 top-4 grid size-11 place-items-center bg-white/10 text-white hover:bg-white/20" aria-label="Tutup galeri"><Icon name="x" /></button>
+          <button type="button" data-lb="prev" class="absolute left-3 top-1/2 grid size-11 -translate-y-1/2 place-items-center bg-white/10 text-white hover:bg-white/20" aria-label="Foto sebelumnya"><Icon name="chevron-left" /></button>
+          <button type="button" data-lb="next" class="absolute right-3 top-1/2 grid size-11 -translate-y-1/2 place-items-center bg-white/10 text-white hover:bg-white/20" aria-label="Foto berikutnya"><Icon name="chevron-right" /></button>
+          <img id="lb-img" alt="" class="max-h-[88vh] max-w-[92vw] object-contain" />
+          <p id="lb-count" class="absolute bottom-4 left-1/2 -translate-x-1/2 text-sm text-white/80" aria-live="polite"></p>
+        </dialog>
+        <script is:inline define:vars={{ daftar: dibuat.map((i) => ({ src: i.full.src, alt: i.alt })) }}>
+          (function () {
+            var dlg = document.getElementById('lightbox');
+            var img = document.getElementById('lb-img');
+            var cnt = document.getElementById('lb-count');
+            var idx = 0;
+            function tampil(i) {
+              idx = (i + daftar.length) % daftar.length;
+              img.src = daftar[idx].src; img.alt = daftar[idx].alt;
+              cnt.textContent = (idx + 1) + ' / ' + daftar.length;
+            }
+            document.querySelectorAll('[data-gallery] button').forEach(function (b) {
+              b.addEventListener('click', function () { tampil(Number(b.dataset.index)); dlg.showModal(); });
+            });
+            dlg.querySelector('[data-lb=close]').addEventListener('click', function () { dlg.close(); });
+            dlg.querySelector('[data-lb=prev]').addEventListener('click', function () { tampil(idx - 1); });
+            dlg.querySelector('[data-lb=next]').addEventListener('click', function () { tampil(idx + 1); });
+            dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+            dlg.addEventListener('keydown', function (e) {
+              if (e.key === 'ArrowLeft') tampil(idx - 1);
+              if (e.key === 'ArrowRight') tampil(idx + 1);
+            });
+          })();
+        </script>
+      </>
+    )}
+  </>
+)}

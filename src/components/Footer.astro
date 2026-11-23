@@ -1,0 +1,39 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+import { getProducts } from '../lib/content';
+import { waUmum } from '../lib/utils';
+const produk = await getProducts();
+---
+<footer class="lattice bg-navy-950 text-white/80">
+  <div class="container-x grid gap-10 py-14 md:grid-cols-4">
+    <div class="md:col-span-1">
+      <p class="text-lg font-extrabold text-white">{site.nama}</p>
+      <p class="mt-3 text-sm leading-relaxed">{site.bidang}. Berdiri sejak {site.tahun}.</p>
+    </div>
+    <div>
+      <p class="text-sm font-bold text-white">Navigasi</p>
+      <ul class="mt-3 space-y-2 text-sm">
+        {site.nav.map((n) => <li><a href={n.href} class="hover:text-white">{n.label}</a></li>)}
+      </ul>
+    </div>
+    <div>
+      <p class="text-sm font-bold text-white">Produk</p>
+      <ul class="mt-3 space-y-2 text-sm">
+        {produk.map((p) => <li><a href={`/produk/${p.slug}/`} class="hover:text-white">{p.nama}</a></li>)}
+      </ul>
+    </div>
+    <div>
+      <p class="text-sm font-bold text-white">Kontak</p>
+      <ul class="mt-3 space-y-2 text-sm">
+        <li>WhatsApp: {site.waTampil}</li>
+        {site.email && <li>{site.email}</li>}
+        {site.alamat && <li>{site.alamat}</li>}
+      </ul>
+      <a href={waUmum} target="_blank" rel="noopener" class="btn btn-brand mt-5"><Icon name="message" class="size-4" />Chat WhatsApp</a>
+    </div>
+  </div>
+  <div class="border-t border-white/10 py-5 text-center text-xs text-white/60">
+    © {new Date().getFullYear()} {site.nama}. Hak cipta dilindungi.
+  </div>
+</footer>

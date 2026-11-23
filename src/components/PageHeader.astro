@@ -1,0 +1,25 @@
+---
+import Icon from './Icon.astro';
+import BgImage from './BgImage.astro';
+import { hero } from '../lib/images';
+import type { ImageMetadata } from 'astro';
+interface Props { judul: string; deskripsi?: string; crumbs?: { name: string; href: string }[]; bg?: ImageMetadata }
+const { judul, deskripsi, crumbs = [], bg } = Astro.props;
+---
+<section class="relative overflow-hidden bg-navy-900 text-white">
+  <BgImage src={bg ?? hero(6)} overlay="bg-linear-to-r from-navy-950/95 via-navy-900/85 to-navy-900/60" />
+  <div class="container-x relative py-14 md:py-20">
+    <nav aria-label="Breadcrumb" class="mb-5 text-sm text-white/70">
+      <ol class="flex flex-wrap items-center gap-1.5">
+        <li><a href="/" class="hover:text-white">Beranda</a></li>
+        {crumbs.map((c, i) => (
+          <li class="flex items-center gap-1.5"><Icon name="chevron-right" class="size-3.5" />
+            {i === crumbs.length - 1 ? <span aria-current="page" class="text-white">{c.name}</span> : <a href={c.href} class="hover:text-white">{c.name}</a>}
+          </li>
+        ))}
+      </ol>
+    </nav>
+    <h1 class="max-w-3xl text-3xl font-extrabold leading-tight md:text-5xl">{judul}</h1>
+    {deskripsi && <p class="mt-4 max-w-2xl text-base leading-relaxed text-white/85 md:text-lg">{deskripsi}</p>}
+  </div>
+</section>

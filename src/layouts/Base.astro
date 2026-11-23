@@ -1,0 +1,76 @@
+---
+import '../styles/global.css';
+import '@fontsource-variable/plus-jakarta-sans';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  fullTitle?: boolean;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  crumbs?: { name: string; href: string }[];
+  jsonLd?: Record<string, unknown>[];
+  noindex?: boolean;
+}
+const { title, description, fullTitle = false, ogImage, ogType = 'website', crumbs = [], jsonLd = [], noindex = false } = Astro.props;
+const judul = fullTitle ? title : `${title} | ${site.nama}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const og = ogImage ? new URL(ogImage, Astro.site).href : undefined;
+const gaId = import.meta.env.PUBLIC_GA_ID;
+
+const organisasi = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: site.nama,
+  url: site.url,
+  foundingDate: String(site.tahun),
+  description: `${site.nama} bergerak di bidang ${site.bidang.toLowerCase()}.`,
+  contactPoint: [{ '@type': 'ContactPoint', contactType: 'sales', telephone: `+${site.waNumber}`, availableLanguage: 'Indonesian' }],
+  ...(site.email ? { email: site.email } : {}),
+};
+const breadcrumb = crumbs.length
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [{ name: 'Beranda', href: '/' }, ...crumbs].map((c, i) => ({
+        '@type': 'ListItem', position: i + 1, name: c.name, item: new URL(c.href, Astro.site).href,
+      })),
+    }
+  : null;
+const semuaLd = [organisasi, ...(breadcrumb ? [breadcrumb] : []), ...jsonLd];
+---
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{judul}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#0b1f3a" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:site_name" content={site.nama} />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={judul} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {og && <meta property="og:image" content={og} />}
+    <meta name="twitter:card" content={og ? 'summary_large_image' : 'summary'} />
+    {semuaLd.map((d) => <script type="application/ld+json" set:html={JSON.stringify(d)} />)}
+    {gaId && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>}
+    {gaId && <script is:inline define:vars={{ gaId }}>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config',gaId);</script>}
+  </head>
+  <body>
+    <a href="#konten" class="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50 focus:bg-white focus:px-3 focus:py-2">Lewati ke konten</a>
+    <Header />
+    <main id="konten"><slot /></main>
+    <Footer />
+    <WhatsAppFloat />
+  </body>
+</html>

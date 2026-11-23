@@ -1,0 +1,60 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Photo from '../../components/Photo.astro';
+import Icon from '../../components/Icon.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import Cta from '../../components/Cta.astro';
+import { getArticles, getProducts } from '../../lib/content';
+import { tanggalIndo, waUmum } from '../../lib/utils';
+import { site } from '../../data/site';
+
+export async function getStaticPaths() {
+  const semua = await getArticles();
+  return semua.map((a) => ({ params: { slug: a.slug }, props: { a } }));
+}
+const { a } = Astro.props;
+const semuaArtikel = await getArticles();
+const lain = semuaArtikel.filter((x) => x.slug !== a.slug).slice(0, 3);
+const produk = await getProducts();
+const terkait = (a.produkTerkait ?? []).map((s) => produk.find((p) => p.slug === s)).filter((x) => !!x);
+const crumbs = [{ name: 'Artikel', href: '/artikel/' }, { name: a.judul, href: `/artikel/${a.slug}/` }];
+const ld = [{
+  '@context': 'https://schema.org', '@type': 'Article', headline: a.judul, description: a.ringkasan,
+  datePublished: a.tanggal, author: { '@type': 'Organization', name: site.nama }, publisher: { '@type': 'Organization', name: site.nama },
+  mainEntityOfPage: new URL(`/artikel/${a.slug}/`, Astro.site).href,
+}];
+---
+<Base title={a.judul} description={a.ringkasan} ogType="article" crumbs={crumbs} jsonLd={ld}>
+  <PageHeader judul={a.judul} deskripsi={`${a.kategori} · ${tanggalIndo(a.tanggal)}`} crumbs={crumbs} bg={a.gambar} />
+  <article class="section">
+    <div class="container-x grid gap-12 lg:grid-cols-[1fr_320px]">
+      <div>
+        <Photo src={a.gambar} alt={a.judul} hint={`src/assets/artikel/0${a.fotoNo}.jpg`} eager class="aspect-video w-full object-cover" sizes="(min-width:1024px) 780px, 100vw" />
+        <!-- Catatan WordPress: isiHtml dari CMS wajib disanitasi sebelum dirender -->
+        <div class="mt-8 max-w-3xl text-lg leading-relaxed text-ink/85 [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-extrabold [&_h2]:text-navy-900 [&_li]:mt-2 [&_p]:mt-4 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:pl-6" set:html={a.isiHtml} />
+      </div>
+      <aside class="h-fit space-y-6 lg:sticky lg:top-24">
+        <div class="bg-navy-900 p-6 text-white">
+          <h2 class="font-extrabold">Butuh arahan produk?</h2>
+          <p class="mt-2 text-sm text-white/80">Ceritakan kebutuhan proyek Anda melalui WhatsApp.</p>
+          <a href={waUmum} target="_blank" rel="noopener" class="btn btn-brand mt-4 w-full"><Icon name="message" class="size-4" />Konsultasi</a>
+        </div>
+        <div class="border border-line p-6">
+          <h2 class="font-extrabold text-navy-900">Artikel lainnya</h2>
+          <ul class="mt-3 space-y-3">{lain.map((l) => <li><a href={`/artikel/${l.slug}/`} class="text-sm font-semibold text-navy-800 hover:text-brand">{l.judul}</a></li>)}</ul>
+        </div>
+      </aside>
+    </div>
+  </article>
+
+  {terkait.length > 0 && (
+    <section class="section bg-mist">
+      <div class="container-x">
+        <h2 class="text-2xl font-extrabold text-navy-900 md:text-3xl">Produk terkait artikel ini</h2>
+        <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{terkait.map((t) => <ProductCard p={t!} />)}</div>
+      </div>
+    </section>
+  )}
+  <Cta href={waUmum} />
+</Base>

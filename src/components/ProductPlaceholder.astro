@@ -1,0 +1,11 @@
+---
+import Icon from './Icon.astro';
+interface Props { nama: string; icon: string; kecil?: boolean }
+const { nama, icon, kecil = false } = Astro.props;
+---
+<div class="lattice grid size-full place-items-center bg-navy-800 p-4 text-center text-white/80" role="img" aria-label={`Foto ${nama} belum tersedia`}>
+  <div>
+    <Icon name={icon} class={kecil ? 'mx-auto size-7' : 'mx-auto size-10'} stroke={1.5} />
+    <p class="mt-2 text-xs font-medium">Foto produk belum tersedia</p>
+  </div>
+</div>

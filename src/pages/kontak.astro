@@ -1,0 +1,112 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+import BgImage from '../components/BgImage.astro';
+import Faq from '../components/Faq.astro';
+import { site } from '../data/site';
+import { infoKonsultasi, faq } from '../data/konten';
+import { getProducts } from '../lib/content';
+import { foto, hero, productImages } from '../lib/images';
+import { waUmum, waPesan, waProduk, faqLd } from '../lib/utils';
+const produk = await getProducts();
+const crumbs = [{ name: 'Kontak', href: '/kontak/' }];
+const f = faq.slice(4, 8);
+const aksi = [
+  { icon: 'grid', judul: 'Tanya produk', teks: 'Informasi fungsi dan aplikasi produk.', href: waPesan('saya ingin bertanya mengenai produk geotextile dan geosynthetic.') },
+  { icon: 'clipboard', judul: 'Minta penawaran', teks: 'Kirim kebutuhan untuk penawaran.', href: waPesan('saya ingin meminta penawaran. Berikut kebutuhan proyek saya:') },
+  { icon: 'hardhat', judul: 'Konsultasi proyek', teks: 'Diskusikan kondisi lapangan Anda.', href: waPesan('saya ingin berkonsultasi mengenai proyek saya.') },
+];
+---
+<Base title="Kontak: Hubungi Geotex Karya Agung" description="Hubungi Geotex Karya Agung untuk konsultasi produk geotextile dan geosynthetic melalui WhatsApp 0851-5666-3687. Lihat lokasi kantor di Google Maps." crumbs={crumbs} jsonLd={[faqLd(f)]}>
+  <!-- Hero: teks kiri, kartu kontak putih di kanan -->
+  <section class="relative overflow-hidden bg-navy-900 text-white">
+    <BgImage src={hero(7)} hint="src/assets/hero/07.jpg" overlay="bg-navy-950/75" />
+    <div class="container-x relative grid items-center gap-10 py-16 md:py-24 lg:grid-cols-[1.1fr_0.9fr]">
+      <div>
+        <nav aria-label="Breadcrumb" class="mb-5 text-sm text-white/70"><a href="/" class="hover:text-white">Beranda</a> / <span aria-current="page" class="text-white">Kontak</span></nav>
+        <h1 class="text-4xl font-extrabold leading-tight md:text-6xl">Hubungi kami</h1>
+        <p class="mt-5 max-w-xl text-lg text-white/85">Cara tercepat adalah melalui WhatsApp. Sebutkan produk dan jenis proyek Anda.</p>
+      </div>
+      <div class="bg-white p-7 text-ink">
+        <p class="flex items-center gap-2 text-sm font-semibold text-ink/65"><Icon name="message" class="size-5 text-brand" />WhatsApp</p>
+        <p class="mt-1 text-3xl font-extrabold text-navy-900">{site.waTampil}</p>
+        <a href={waUmum} target="_blank" rel="noopener" class="btn btn-brand mt-5 w-full"><Icon name="message" class="size-4" />Mulai chat</a>
+        {site.mapsLink && <a href={site.mapsLink} target="_blank" rel="noopener" class="btn btn-outline-dark mt-2 w-full"><Icon name="pin" class="size-4" />Buka di Google Maps</a>}
+      </div>
+    </div>
+  </section>
+
+  <!-- Aksi cepat -->
+  <section class="section">
+    <div class="container-x">
+      <h2 class="text-3xl font-extrabold text-navy-900 md:text-4xl">Pilih keperluan Anda</h2>
+      <ul class="mt-8 grid gap-5 md:grid-cols-3">
+        {aksi.map((a) => (
+          <li class="border border-line p-6">
+            <span class="grid size-12 place-items-center bg-navy-900 text-white"><Icon name={a.icon} class="size-6" /></span>
+            <h3 class="mt-4 text-lg font-extrabold text-navy-900">{a.judul}</h3>
+            <p class="mt-1 text-sm text-ink/75">{a.teks}</p>
+            <a href={a.href} target="_blank" rel="noopener" class="mt-5 inline-flex items-center gap-2 font-semibold text-brand hover:underline">Kirim via WhatsApp<Icon name="arrow" class="size-4" /></a>
+          </li>
+        ))}
+      </ul>
+      {(site.email || site.alamat) && (
+        <ul class="mt-6 grid gap-4 md:grid-cols-2">
+          {site.email && <li class="flex items-center gap-3 bg-mist p-4"><Icon name="file" class="text-brand" /><span>{site.email}</span></li>}
+          {site.alamat && <li class="flex items-center gap-3 bg-mist p-4"><Icon name="pin" class="text-brand" /><span>{site.alamat}</span></li>}
+        </ul>
+      )}
+    </div>
+  </section>
+
+  <!-- Peta -->
+  <section class="bg-mist py-16 md:py-24">
+    <div class="container-x">
+      <h2 class="flex items-center gap-3 text-3xl font-extrabold text-navy-900 md:text-4xl"><Icon name="pin" class="size-8 text-brand" />Lokasi kantor</h2>
+      <div class="mt-8 aspect-[4/3] border border-line bg-white md:aspect-[16/7]">
+        {site.mapsEmbed && <iframe src={site.mapsEmbed} title={`Lokasi kantor ${site.nama} di Google Maps`} class="size-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>}
+      </div>
+    </div>
+  </section>
+
+  <!-- Info yang disiapkan -->
+  <section class="section">
+    <div class="container-x grid items-center gap-12 lg:grid-cols-[1.2fr_0.8fr]">
+      <div>
+        <h2 class="text-3xl font-extrabold text-navy-900 md:text-4xl">Siapkan informasi ini saat menghubungi kami</h2>
+        <ul class="mt-8 grid gap-4 sm:grid-cols-2">
+          {infoKonsultasi.map((i) => (
+            <li class="flex gap-3"><span class="grid size-10 shrink-0 place-items-center bg-navy-900 text-white"><Icon name={i.icon} class="size-5" /></span>
+              <div><h3 class="font-bold text-navy-900">{i.judul}</h3><p class="text-sm text-ink/75">{i.teks}</p></div></li>
+          ))}
+        </ul>
+      </div>
+      <Photo src={foto('kontak', 1, 30)} alt="Konsultasi produk Geotex Karya Agung" hint="src/assets/kontak/01.jpg" class="aspect-[4/5] w-full object-cover" sizes="(min-width:1024px) 400px, 90vw" />
+    </div>
+  </section>
+
+  <!-- Tanya per produk -->
+  <section class="section lattice bg-navy-900 text-white">
+    <div class="container-x">
+      <h2 class="text-3xl font-extrabold md:text-4xl">Tanya langsung per produk</h2>
+      <ul class="mt-10 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+        {produk.map((p) => (
+          <li>
+            <a href={waProduk(p.nama)} target="_blank" rel="noopener" class="group relative block aspect-square overflow-hidden">
+              <Photo src={productImages(p.slug)[0]} alt={`${p.nama} Geotex Karya Agung`} hint={p.slug} class="size-full object-cover transition-transform duration-300 group-hover:scale-105" sizes="(min-width:1024px) 220px, 45vw" />
+              <span class="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-navy-950/90 px-3 py-2 text-sm font-bold"><span>{p.nama}</span><Icon name="message" class="size-4 text-brand" /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-x grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
+      <h2 class="text-3xl font-extrabold text-navy-900">Pertanyaan umum</h2>
+      <Faq items={f} />
+    </div>
+  </section>
+</Base>

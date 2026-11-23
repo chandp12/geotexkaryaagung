@@ -1,0 +1,17 @@
+---
+import Icon from './Icon.astro';
+interface Props { langkah: { icon: string; judul: string; teks: string }[] }
+const { langkah } = Astro.props;
+---
+<ol class="grid gap-6 md:grid-cols-4">
+  {langkah.map((l, i) => (
+    <li class="border-t-4 border-brand bg-white pt-5">
+      <div class="flex items-center gap-3">
+        <span class="grid size-9 place-items-center bg-navy-900 text-sm font-extrabold text-white">{i + 1}</span>
+        <Icon name={l.icon} class="size-6 text-navy-700" />
+      </div>
+      <h3 class="mt-4 font-extrabold text-navy-900">{l.judul}</h3>
+      <p class="mt-1 text-sm leading-relaxed text-ink/75">{l.teks}</p>
+    </li>
+  ))}
+</ol>

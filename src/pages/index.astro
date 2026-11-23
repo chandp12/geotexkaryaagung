@@ -1,0 +1,212 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+import BgImage from '../components/BgImage.astro';
+import ProductCard from '../components/ProductCard.astro';
+import Faq from '../components/Faq.astro';
+import Alur from '../components/Alur.astro';
+import Cta from '../components/Cta.astro';
+import { site } from '../data/site';
+import { stat, keunggulan, aplikasi, alur, faq, profil } from '../data/konten';
+import { getProducts, getArticles } from '../lib/content';
+import { foto, hero, productImages } from '../lib/images';
+import { waUmum, tanggalIndo, faqLd } from '../lib/utils';
+
+const produk = await getProducts();
+const artikel = (await getArticles()).slice(0, 3);
+const faqTampil = faq.slice(0, 5);
+const galeri = [1, 2, 3, 4, 5, 6].map((n) => foto('proyek', n, 20 + n * 2));
+---
+<Base
+  fullTitle
+  title="Geotextile Indonesia: Produk Geotextile dan Geosynthetic | Geotex Karya Agung"
+  description="Geotex Karya Agung menyediakan geotextile dan geosynthetic: geogrid, geocell, geomembran, geomat, woven, non woven, dan lainnya. Konsultasi kebutuhan proyek via WhatsApp."
+  jsonLd={[faqLd(faqTampil)]}
+>
+  <!-- Hero -->
+  <section class="relative overflow-hidden bg-navy-900 text-white">
+    <BgImage src={hero(1)} hint="src/assets/hero/01.jpg" overlay="bg-linear-to-r from-navy-950/95 via-navy-900/80 to-navy-900/45" />
+    <div class="container-x relative grid items-center gap-10 py-16 md:py-24 lg:grid-cols-[1.1fr_0.9fr]">
+      <div>
+        <h1 class="text-4xl font-extrabold leading-[1.08] md:text-6xl">Geotextile dan geosynthetic untuk tanah yang harus menahan beban</h1>
+        <p class="mt-6 max-w-xl text-lg leading-relaxed text-white/85">
+          {site.nama} menyediakan sembilan kategori produk untuk perkuatan tanah, drainase, dan lapisan kedap air pada proyek konstruksi Anda.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="/produk/" class="btn btn-brand">Lihat produk</a>
+          <a href={waUmum} target="_blank" rel="noopener" class="btn btn-outline"><Icon name="message" class="size-4" />Konsultasi WhatsApp</a>
+        </div>
+      </div>
+
+      <div class="border border-white/25 bg-navy-950/70">
+        <p class="border-b border-white/20 px-5 py-3 text-sm font-semibold">Pilih kategori produk</p>
+        <ul class="grid grid-cols-3 gap-px bg-white/15">
+          {produk.map((p) => (
+            <li class="bg-navy-950">
+              <a href={`/produk/${p.slug}/`} class="group relative block aspect-square overflow-hidden">
+                <Photo src={productImages(p.slug)[0]} alt={`${p.nama} Geotex Karya Agung`} hint={p.slug} widths={[200, 320, 480]} sizes="(min-width:1024px) 150px, 30vw" class="size-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                <span class="absolute inset-x-0 bottom-0 flex items-center gap-1.5 bg-navy-950/85 px-2 py-1.5 text-[11px] font-bold leading-tight sm:text-xs">
+                  <Icon name={p.icon} class="size-3.5 shrink-0 text-brand" />{p.nama}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Strip statistik -->
+  <section class="border-b border-line bg-white">
+    <ul class="container-x grid grid-cols-2 divide-line md:grid-cols-4 md:divide-x">
+      {stat.map((s) => (
+        <li class="flex items-center gap-3 py-6 md:px-6 md:first:pl-0">
+          <Icon name={s.icon} class="size-8 shrink-0 text-brand" stroke={1.5} />
+          <div><p class="text-lg font-extrabold leading-tight text-navy-900">{s.angka}</p><p class="text-xs text-ink/65">{s.label}</p></div>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Perkenalan -->
+  <section class="section">
+    <div class="container-x grid items-center gap-12 lg:grid-cols-2">
+      <div class="grid grid-cols-5 grid-rows-2 gap-3">
+        <Photo src={foto('beranda', 1, 10)} alt="Dokumentasi produk Geotex Karya Agung" hint="src/assets/beranda/01.jpg" class="col-span-3 row-span-2 size-full min-h-72 object-cover" sizes="(min-width:1024px) 300px, 60vw" />
+        <Photo src={foto('beranda', 2, 11)} alt="Produk geosynthetic Geotex Karya Agung" hint="src/assets/beranda/02.jpg" class="col-span-2 aspect-square size-full object-cover" sizes="(min-width:1024px) 200px, 40vw" />
+        <Photo src={foto('beranda', 3, 12)} alt="Material geotextile Geotex Karya Agung" hint="src/assets/beranda/03.jpg" class="col-span-2 aspect-square size-full object-cover" sizes="(min-width:1024px) 200px, 40vw" />
+      </div>
+      <div>
+        <h2 class="text-3xl font-extrabold text-navy-900 md:text-4xl">Mengenal {site.nama}</h2>
+        <p class="mt-3 border-l-4 border-brand pl-4 text-lg font-semibold text-navy-800">Berdiri sejak {site.tahun}</p>
+        <div class="mt-6 space-y-4 text-lg leading-relaxed text-ink/80">{profil.paragraf.slice(0, 2).map((t) => <p>{t}</p>)}</div>
+        <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+          {['Perkuatan tanah dan lereng', 'Drainase dan filtrasi', 'Lapisan kedap air', 'Pengendalian erosi'].map((t) => (
+            <li class="flex items-center gap-2 font-semibold text-navy-900"><Icon name="check" class="size-5 text-brand" />{t}</li>
+          ))}
+        </ul>
+        <a href="/tentang-kami/" class="mt-7 inline-flex items-center gap-2 font-semibold text-brand hover:underline">Baca profil lengkap<Icon name="arrow" class="size-4" /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Produk -->
+  <section class="section bg-mist" id="produk">
+    <div class="container-x">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 class="text-3xl font-extrabold text-navy-900 md:text-4xl">Sembilan kategori produk</h2>
+          <p class="mt-3 max-w-xl text-ink/75">Pilih kategori untuk melihat fungsi, aplikasi, dan galeri foto produk.</p>
+        </div>
+        <a href="/produk/" class="btn btn-outline-dark">Katalog lengkap</a>
+      </div>
+      <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{produk.map((p) => <ProductCard p={p} />)}</div>
+    </div>
+  </section>
+
+  <!-- Keunggulan -->
+  <section class="section">
+    <div class="container-x grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+      <div class="relative hidden lg:block">
+        <Photo src={foto('beranda', 4, 13)} alt="Aplikasi geosynthetic di lapangan" hint="src/assets/beranda/04.jpg" class="size-full min-h-[520px] object-cover" sizes="40vw" />
+        <div class="absolute -bottom-4 -right-4 -z-10 size-40 bg-brand"></div>
+      </div>
+      <div>
+        <h2 class="max-w-xl text-3xl font-extrabold text-navy-900 md:text-4xl">Mengapa memilih {site.nama}</h2>
+        <dl class="mt-10 grid gap-x-8 gap-y-7 sm:grid-cols-2">
+          {keunggulan.map((k) => (
+            <div class="border-t border-line pt-5">
+              <span class="grid size-11 place-items-center bg-navy-900 text-white"><Icon name={k.icon} /></span>
+              <dt class="mt-4 font-extrabold text-navy-900">{k.judul}</dt>
+              <dd class="mt-1 text-sm leading-relaxed text-ink/75">{k.teks}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- Aplikasi -->
+  <section class="section lattice bg-navy-900 text-white">
+    <div class="container-x">
+      <h2 class="max-w-2xl text-3xl font-extrabold md:text-4xl">Di mana geosynthetic dipakai</h2>
+      <p class="mt-3 max-w-xl text-white/75">Bidang aplikasi produk geotextile dan geosynthetic pada konstruksi.</p>
+      <ul class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {aplikasi.map((a, i) => (
+          <li class="overflow-hidden bg-navy-950">
+            <Photo src={foto('aplikasi', i + 1, 6 + i * 3)} alt={a.judul} hint={`src/assets/aplikasi/0${i + 1}.jpg`} class="aspect-[16/10] w-full object-cover" sizes="(min-width:1024px) 360px, 90vw" />
+            <div class="p-5">
+              <div class="flex items-center gap-3"><Icon name={a.icon} class="size-6 text-brand" stroke={1.5} /><h3 class="font-extrabold">{a.judul}</h3></div>
+              <p class="mt-2 text-sm leading-relaxed text-white/75">{a.teks}</p>
+              <p class="mt-3 text-xs text-white/60">Produk: {a.produk.join(', ')}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Alur -->
+  <section class="section">
+    <div class="container-x">
+      <h2 class="max-w-xl text-3xl font-extrabold text-navy-900 md:text-4xl">Cara berkonsultasi dengan kami</h2>
+      <div class="mt-10"><Alur langkah={alur} /></div>
+    </div>
+  </section>
+
+  <!-- Dokumentasi -->
+  <section class="section bg-mist">
+    <div class="container-x">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <h2 class="text-3xl font-extrabold text-navy-900 md:text-4xl">Dokumentasi produk dan proyek</h2>
+        <a href="/proyek/" class="btn btn-outline-dark"><Icon name="camera" class="size-4" />Lihat semua dokumentasi</a>
+      </div>
+      <ul class="mt-8 grid grid-flow-dense auto-rows-[140px] grid-cols-2 gap-3 md:auto-rows-[190px] md:grid-cols-4">
+        {galeri.map((g, i) => (
+          <li class:list={['overflow-hidden', i === 0 ? 'col-span-2 row-span-2' : '', i === 3 ? 'md:col-span-2' : '']}>
+            <Photo src={g} alt="Dokumentasi Geotex Karya Agung" hint={`src/assets/proyek/0${i + 1}.jpg`} class="size-full object-cover" sizes="(min-width:768px) 300px, 50vw" />
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Artikel -->
+  {artikel.length > 0 && (
+    <section class="section">
+      <div class="container-x">
+        <div class="flex items-end justify-between gap-4">
+          <h2 class="text-3xl font-extrabold text-navy-900 md:text-4xl">Artikel terbaru</h2>
+          <a href="/artikel/" class="font-semibold text-brand hover:underline">Semua artikel</a>
+        </div>
+        <ul class="mt-8 grid gap-6 md:grid-cols-3">
+          {artikel.map((a) => (
+            <li class="border border-line">
+              <a href={`/artikel/${a.slug}/`} class="block"><Photo src={a.gambar} alt={a.judul} hint={`src/assets/artikel/0${a.fotoNo}.jpg`} class="aspect-video w-full object-cover" sizes="(min-width:768px) 360px, 90vw" /></a>
+              <div class="p-5">
+                <p class="text-xs text-ink/60">{a.kategori} · {tanggalIndo(a.tanggal)}</p>
+                <h3 class="mt-2 font-extrabold text-navy-900"><a href={`/artikel/${a.slug}/`} class="hover:text-brand">{a.judul}</a></h3>
+                <p class="mt-2 text-sm text-ink/75">{a.ringkasan}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <!-- FAQ -->
+  <section class="section bg-mist">
+    <div class="container-x grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
+      <div>
+        <h2 class="text-3xl font-extrabold text-navy-900 md:text-4xl">Pertanyaan yang sering diajukan</h2>
+        <p class="mt-3 text-ink/75">Tidak menemukan jawabannya? Tanyakan langsung melalui WhatsApp.</p>
+        <a href={waUmum} target="_blank" rel="noopener" class="btn btn-brand mt-6"><Icon name="message" class="size-4" />Tanya via WhatsApp</a>
+      </div>
+      <Faq items={faqTampil} />
+    </div>
+  </section>
+
+  <Cta href={waUmum} />
+</Base>

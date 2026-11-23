@@ -1,0 +1,129 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Gallery from '../../components/Gallery.astro';
+import Icon from '../../components/Icon.astro';
+import Photo from '../../components/Photo.astro';
+import BgImage from '../../components/BgImage.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import Alur from '../../components/Alur.astro';
+import Faq from '../../components/Faq.astro';
+import Cta from '../../components/Cta.astro';
+import { getProducts } from '../../lib/content';
+import { productImages, hero } from '../../lib/images';
+import { alur, faq } from '../../data/konten';
+import { waProduk, faqLd } from '../../lib/utils';
+
+export async function getStaticPaths() {
+  const semua = await getProducts();
+  return semua.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+const { p } = Astro.props;
+const semua = await getProducts();
+const foto = productImages(p.slug);
+const terkait = p.terkait.map((s) => semua.find((x) => x.slug === s)).filter((x) => !!x);
+const og = foto[0] ? (await getImage({ src: foto[0], width: 1200, height: 630, format: 'jpg' })).src : undefined;
+const crumbs = [{ name: 'Produk', href: '/produk/' }, { name: p.nama, href: `/produk/${p.slug}/` }];
+const wa = waProduk(p.nama);
+const f = faq.slice(0, 5);
+---
+<Base title={p.seoTitle} description={p.seoDesc} crumbs={crumbs} ogImage={og} jsonLd={[faqLd(f)]}>
+  <section class="relative overflow-hidden bg-navy-900 text-white">
+    <BgImage src={foto[1] ?? foto[0] ?? hero(3)} overlay="bg-navy-950/85" />
+    <div class="container-x relative grid items-center gap-10 py-12 md:py-16 lg:grid-cols-2">
+      <div>
+        <nav aria-label="Breadcrumb" class="mb-5 text-sm text-white/70">
+          <ol class="flex flex-wrap items-center gap-1.5">
+            <li><a href="/" class="hover:text-white">Beranda</a></li>
+            <li class="flex items-center gap-1.5"><Icon name="chevron-right" class="size-3.5" /><a href="/produk/" class="hover:text-white">Produk</a></li>
+            <li class="flex items-center gap-1.5"><Icon name="chevron-right" class="size-3.5" /><span aria-current="page" class="text-white">{p.nama}</span></li>
+          </ol>
+        </nav>
+        <h1 class="text-4xl font-extrabold leading-tight md:text-5xl">{p.nama}</h1>
+        <p class="mt-4 max-w-xl text-lg leading-relaxed text-white/85">{p.singkat}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={wa} target="_blank" rel="noopener" class="btn btn-brand"><Icon name="message" class="size-4" />Konsultasi produk ini</a>
+          <a href="/produk/" class="btn btn-outline">Semua produk</a>
+        </div>
+      </div>
+      <div class="aspect-[4/3] overflow-hidden bg-navy-800">
+        <Photo src={foto[0]} alt={`${p.nama} Geotex Karya Agung`} hint={`src/assets/produk/${p.slug}/01.jpg`} eager widths={[480, 800, 1100]} sizes="(min-width:1024px) 540px, 100vw" class="size-full object-cover" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-x grid gap-12 lg:grid-cols-[1.3fr_0.7fr]">
+      <div class="space-y-12">
+        <div>
+          <h2 class="text-2xl font-extrabold text-navy-900">Tentang {p.nama}</h2>
+          <div class="mt-4 max-w-prose space-y-4 text-lg leading-relaxed text-ink/80">{p.deskripsi.map((t) => <p>{t}</p>)}</div>
+        </div>
+        <div>
+          <h2 class="text-2xl font-extrabold text-navy-900">Fungsi dan kegunaan</h2>
+          <ul class="mt-4 space-y-3">{p.fungsi.map((t) => <li class="flex gap-3"><Icon name="check" class="mt-1 size-5 shrink-0 text-brand" />{t}</li>)}</ul>
+        </div>
+        {p.jenis && (
+          <div>
+            <h2 class="text-2xl font-extrabold text-navy-900">Jenis {p.nama}</h2>
+            <ul class="mt-4 grid gap-4 sm:grid-cols-2">{p.jenis.map((j) => <li class="border border-line p-5"><h3 class="flex items-center gap-2 font-extrabold text-navy-900"><Icon name={p.icon} class="size-5 text-brand" />{j.judul}</h3><p class="mt-2 text-sm leading-relaxed text-ink/75">{j.teks}</p></li>)}</ul>
+          </div>
+        )}
+        <div>
+          <h2 class="text-2xl font-extrabold text-navy-900">Aplikasi dalam konstruksi</h2>
+          <ul class="mt-4 grid gap-3 sm:grid-cols-2">{p.aplikasi.map((t) => <li class="flex gap-3 border border-line p-4"><Icon name="hardhat" class="size-5 shrink-0 text-navy-700" />{t}</li>)}</ul>
+        </div>
+        {p.keunggulan.length > 0 && (
+          <div>
+            <h2 class="text-2xl font-extrabold text-navy-900">Keunggulan</h2>
+            <ul class="mt-4 grid gap-3 sm:grid-cols-2">{p.keunggulan.map((t) => <li class="flex gap-3 bg-mist p-4"><Icon name="shield-check" class="mt-0.5 size-5 shrink-0 text-brand" />{t}</li>)}</ul>
+          </div>
+        )}
+      </div>
+
+      <aside class="h-fit border border-line bg-mist p-6 lg:sticky lg:top-24">
+        <h2 class="font-extrabold text-navy-900">Informasi produk</h2>
+        {p.spesifikasi.length > 0 && (
+          <table class="mt-4 w-full text-sm"><tbody>{p.spesifikasi.map((s) => <tr class="border-b border-line align-top"><th class="py-2 pr-3 text-left font-semibold">{s.label}</th><td class="py-2">{s.nilai}</td></tr>)}</tbody></table>
+        )}
+        <p class="mt-4 text-sm leading-relaxed text-ink/75">Data teknis lengkap dapat diminta melalui WhatsApp.</p>
+        <a href={wa} target="_blank" rel="noopener" class="btn btn-brand mt-5 w-full"><Icon name="message" class="size-4" />Minta informasi</a>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section bg-mist">
+    <div class="container-x">
+      <h2 class="flex items-center gap-3 text-2xl font-extrabold text-navy-900 md:text-3xl"><Icon name="camera" class="size-7 text-brand" />Galeri foto {p.nama}</h2>
+      <div class="mt-8">
+        {foto.length > 0 ? <Gallery images={foto} nama={p.nama} mosaic /> : (
+          <Gallery images={[undefined, undefined, undefined, undefined, undefined, undefined]} nama={p.nama} />
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-x">
+      <h2 class="text-2xl font-extrabold text-navy-900 md:text-3xl">Cara memesan {p.nama}</h2>
+      <div class="mt-8"><Alur langkah={alur} /></div>
+    </div>
+  </section>
+
+  {terkait.length > 0 && (
+    <section class="section bg-mist">
+      <div class="container-x">
+        <h2 class="text-2xl font-extrabold text-navy-900 md:text-3xl">Produk terkait</h2>
+        <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{terkait.map((t) => <ProductCard p={t!} />)}</div>
+      </div>
+    </section>
+  )}
+
+  <section class="section">
+    <div class="container-x grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
+      <h2 class="text-2xl font-extrabold text-navy-900 md:text-3xl">Pertanyaan umum</h2>
+      <Faq items={f} />
+    </div>
+  </section>
+  <Cta href={wa} judul={`Butuh ${p.nama} untuk proyek Anda?`} />
+</Base>

@@ -1,0 +1,124 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import Photo from '../../components/Photo.astro';
+import BgImage from '../../components/BgImage.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import Faq from '../../components/Faq.astro';
+import Cta from '../../components/Cta.astro';
+import { getProducts } from '../../lib/content';
+import { panduan, bandingWoven, faq } from '../../data/konten';
+import { foto, hero } from '../../lib/images';
+import { waUmum, faqLd } from '../../lib/utils';
+const produk = await getProducts();
+const crumbs = [{ name: 'Produk', href: '/produk/' }];
+const f = faq.slice(0, 4);
+---
+<Base title="Produk Geotextile dan Geosynthetic" description="Katalog 9 kategori produk Geotex Karya Agung: Drainase Cell, Geocell, Geocomposite, Geogrid, Geomat, Geomembran, Geopipe, Non Woven, dan Woven." crumbs={crumbs} jsonLd={[faqLd(f)]}>
+  <!-- Hero: teks di tengah, chip kategori di bawah -->
+  <section class="relative overflow-hidden bg-navy-900 text-center text-white">
+    <BgImage src={hero(3)} hint="src/assets/hero/03.jpg" overlay="bg-navy-950/80" />
+    <div class="container-x relative py-16 md:py-24">
+      <nav aria-label="Breadcrumb" class="mb-5 text-sm text-white/70"><a href="/" class="hover:text-white">Beranda</a> / <span aria-current="page" class="text-white">Produk</span></nav>
+      <h1 class="mx-auto max-w-3xl text-4xl font-extrabold leading-tight md:text-6xl">Katalog produk geotextile dan geosynthetic</h1>
+      <p class="mx-auto mt-5 max-w-2xl text-lg text-white/85">Sembilan kategori produk dengan informasi fungsi, aplikasi, dan galeri foto.</p>
+      <ul class="mx-auto mt-10 flex max-w-4xl flex-wrap justify-center gap-2">
+        {produk.map((p) => (
+          <li><a href={`#${p.slug}`} class="inline-flex items-center gap-2 border border-white/30 bg-navy-950/60 px-3 py-2 text-sm font-semibold transition-colors hover:bg-brand"><Icon name={p.icon} class="size-4" />{p.nama}</a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Pengantar -->
+  <section class="section">
+    <div class="container-x grid items-center gap-12 lg:grid-cols-2">
+      <div>
+        <h2 class="text-3xl font-extrabold text-navy-900 md:text-4xl">Material untuk setiap kebutuhan tanah</h2>
+        <p class="mt-5 text-lg leading-relaxed text-ink/80">Produk kami berbahan polimer HDPE, polypropylene, dan polyester. Setiap kategori punya fungsi yang berbeda: ada yang memperkuat tanah, mengalirkan air, menyaring butiran tanah, mengendalikan erosi, hingga membuat lapisan kedap.</p>
+        <p class="mt-4 text-lg leading-relaxed text-ink/80">Gunakan panduan di bawah katalog untuk menemukan produk yang sesuai kebutuhan proyek Anda.</p>
+        <a href="#panduan" class="mt-6 inline-flex items-center gap-2 font-semibold text-brand hover:underline">Ke panduan memilih produk<Icon name="arrow" class="size-4" /></a>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <Photo src={foto('produk-intro', 1, 8)} alt="Produk Geotex Karya Agung" hint="src/assets/produk-intro/01.jpg" class="aspect-[3/4] size-full object-cover" sizes="(min-width:1024px) 280px, 45vw" />
+        <Photo src={foto('produk-intro', 2, 9)} alt="Material geosynthetic" hint="src/assets/produk-intro/02.jpg" class="mt-8 aspect-[3/4] size-full object-cover" sizes="(min-width:1024px) 280px, 45vw" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Katalog -->
+  <section class="section bg-mist">
+    <div class="container-x">
+      <div class="relative max-w-md">
+        <Icon name="search" class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink/50" />
+        <label for="cari" class="sr-only">Cari produk</label>
+        <input id="cari" type="search" placeholder="Cari produk, mis. geogrid atau drainase" class="w-full border border-line bg-white py-3 pl-10 pr-3 text-sm" autocomplete="off" />
+      </div>
+      <p id="kosong" class="mt-8 hidden text-ink/70">Tidak ada produk yang cocok. Coba kata kunci lain atau <a class="font-semibold text-brand" href={waUmum} target="_blank" rel="noopener">tanyakan via WhatsApp</a>.</p>
+      <div id="daftar" class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {produk.map((p) => <div id={p.slug} class="scroll-mt-24 product-wrap"><ProductCard p={p} /></div>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Panduan -->
+  <section class="section" id="panduan">
+    <div class="container-x">
+      <h2 class="text-3xl font-extrabold text-navy-900 md:text-4xl">Panduan memilih produk</h2>
+      <p class="mt-3 max-w-xl text-ink/75">Temukan kategori produk berdasarkan kebutuhan lapangan. Untuk rekomendasi yang tepat, tetap konsultasikan kondisi proyek Anda.</p>
+      <ul class="mt-10 grid gap-4 md:grid-cols-2">
+        {panduan.map((g) => (
+          <li class="flex gap-4 border border-line p-5">
+            <span class="grid size-11 shrink-0 place-items-center bg-navy-900 text-white"><Icon name={g.icon} /></span>
+            <div>
+              <h3 class="font-extrabold text-navy-900">{g.kebutuhan}</h3>
+              <p class="mt-2 flex flex-wrap gap-2">{g.slugs.map(([s, n]) => <a href={`/produk/${s}/`} class="bg-mist px-2.5 py-1 text-sm font-semibold text-navy-800 hover:bg-brand hover:text-white">{n}</a>)}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Perbandingan -->
+  <section class="section lattice bg-navy-900 text-white">
+    <div class="container-x">
+      <h2 class="text-3xl font-extrabold md:text-4xl">Woven dan non woven: apa bedanya?</h2>
+      <div class="mt-8 overflow-x-auto">
+        <table class="w-full min-w-[640px] border-collapse text-left text-sm">
+          <thead><tr class="bg-navy-950"><th class="p-4"></th><th class="p-4 text-base">WOVEN</th><th class="p-4 text-base">NON WOVEN</th></tr></thead>
+          <tbody>
+            {bandingWoven.map((r) => (
+              <tr class="border-t border-white/15"><th class="p-4 font-bold text-brand">{r.label}</th><td class="p-4 text-white/85">{r.woven}</td><td class="p-4 text-white/85">{r.non}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-6 flex flex-wrap gap-3"><a href="/produk/woven/" class="btn btn-outline">Lihat WOVEN</a><a href="/produk/non-woven/" class="btn btn-outline">Lihat NON WOVEN</a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-x grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
+      <h2 class="text-3xl font-extrabold text-navy-900">Pertanyaan seputar produk</h2>
+      <Faq items={f} />
+    </div>
+  </section>
+  <Cta href={waUmum} judul="Belum yakin produk mana yang cocok?" />
+</Base>
+<script>
+  const input = document.getElementById('cari') as HTMLInputElement | null;
+  const bungkus = document.querySelectorAll<HTMLElement>('.product-wrap');
+  const kosong = document.getElementById('kosong');
+  input?.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    let tampil = 0;
+    bungkus.forEach((w) => {
+      const k = w.querySelector<HTMLElement>('.product-card');
+      const cocok = !q || ((k?.dataset.nama ?? '') + ' ' + (k?.dataset.info ?? '')).includes(q);
+      w.classList.toggle('hidden', !cocok);
+      if (cocok) tampil++;
+    });
+    kosong?.classList.toggle('hidden', tampil > 0);
+  });
+</script>
