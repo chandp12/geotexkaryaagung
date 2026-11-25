@@ -4,8 +4,8 @@ export const site = {
   bidang: 'Geotextile dan Geosynthetic',
   tahun: 2020,
   url: 'https://geotexkaryaagung.co.id',
-  waNumber: '6285156663687',
-  waTampil: '0851-5666-3687',
+  waNumber: '6282118350863',
+  waTampil: '0821-1835-0863',
   // Belum diberikan: isi bila sudah ada. Kosong = bagian ini disembunyikan.
   email: '',
   alamat: '',

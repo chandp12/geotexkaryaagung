@@ -18,7 +18,7 @@ const aksi = [
   { icon: 'hardhat', judul: 'Konsultasi proyek', teks: 'Diskusikan kondisi lapangan Anda.', href: waPesan('saya ingin berkonsultasi mengenai proyek saya.') },
 ];
 ---
-<Base title="Kontak: Hubungi Geotex Karya Agung" description="Hubungi Geotex Karya Agung untuk konsultasi produk geotextile dan geosynthetic melalui WhatsApp 0851-5666-3687. Lihat lokasi kantor di Google Maps." crumbs={crumbs} jsonLd={[faqLd(f)]}>
+<Base title="Kontak: Hubungi Geotex Karya Agung" description={`Hubungi Geotex Karya Agung untuk konsultasi produk geotextile dan geosynthetic melalui WhatsApp ${site.waTampil}. Lihat lokasi kantor di Google Maps.`} crumbs={crumbs} jsonLd={[faqLd(f)]}>
   <!-- Hero: teks kiri, kartu kontak putih di kanan -->
   <section class="relative overflow-hidden bg-navy-900 text-white">
     <BgImage src={hero(7)} hint="src/assets/hero/07.jpg" overlay="bg-navy-950/75" />
